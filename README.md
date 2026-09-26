@@ -59,8 +59,8 @@ node --test
 
 ## En ligne
 
-Adresse publique : **à inscrire ici** quand le domaine Railway du service existera (ticket #1684,
-geste manuel), et dans la variable `URL_PUBLIQUE` du dépôt GitHub.
+Adresse publique : <https://site-production-f87f.up.railway.app> — service `site` du projet
+Railway `heure-des-capitales`. Le code vit sur <https://github.com/oliviermmm/heure-des-capitales>.
 
 Le site est servi par Railway : un conteneur Caddy qui ne sert que `index.html`, `css/`, `js/` et
 `version.txt` (`Dockerfile`, `railway.json`). Rien n'est ajouté au site lui-même.
@@ -81,9 +81,10 @@ Le site est servi par Railway : un conteneur Caddy qui ne sert que `index.html`,
 - **Constater la version en service** : `curl <adresse publique>/version.txt` rend le tag servi.
   En local, ce fichier dit `hors-livraison`.
 
-Ce que le dépôt GitHub doit porter pour livrer : le secret `RAILWAY_TOKEN` (jeton de projet
-Railway), les variables `RAILWAY_SERVICE` (nom du service) et `URL_PUBLIQUE` (sans `/` final), et
-`main` comme branche par défaut — c'est elle que le workflow lit comme branche de production.
+Ce que le dépôt GitHub porte pour livrer, posé par Tickets AI à la création du service : le secret
+`RAILWAY_TOKEN` (jeton de projet Railway), les variables `RAILWAY_SERVICE` (nom du service) et
+`URL_PUBLIQUE` (sans `/` final). `main` est la branche par défaut : c'est elle que le workflow lit
+comme branche de production.
 
 ## Organisation
 
