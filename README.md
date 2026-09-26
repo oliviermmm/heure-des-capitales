@@ -24,6 +24,7 @@ seul prérequis, et ce n'est pas une dépendance du site : n'importe quel serveu
 ## Ce que montre la page
 
 - en tête, l'heure, la date et le fuseau du visiteur ;
+- sous l'en-tête, au-dessus de la grille, une carte du monde (contours des pays), à toute la largeur ;
 - une carte par capitale (capitale, pays, heure, date, décalage UTC), mise à jour chaque seconde ;
 - un champ de recherche sur le pays ou la capitale, y compris les autres capitales d'un pays
   (« la haye » trouve les Pays-Bas), sans tenir compte de la casse, des accents, des espaces, des
@@ -49,6 +50,24 @@ Le filtre et le tri sont la fonction pure `organiser` de `js/grille.js`, testée
 - **Mouvement** : seule animation, un fondu de couleur quand une carte passe du jour à la nuit, coupé
   sous `prefers-reduced-motion`.
 
+## La carte du monde
+
+- **Source** : contours des pays de [Natural Earth](https://www.naturalearthdata.com) 1:110m
+  (`ne_110m_admin_0_countries`, v5.1.2, domaine public), vendorisés dans `js/monde.js`. Rien n'est
+  chargé d'ailleurs.
+- **Budget** : moins de 150 000 octets pour `js/monde.js` (aujourd'hui ~109 Ko), vérifié par
+  `tests/projection.test.js`. Simplification : coordonnées arrondies à 0,1°, points répétés retirés.
+- **Régénérer** : télécharger `geojson/ne_110m_admin_0_countries.geojson` depuis
+  <https://github.com/nvkelso/natural-earth-vector>, puis
+  `node outils/fond-de-carte.mjs ne_110m_admin_0_countries.geojson` (le fichier source ne se versionne pas).
+- **Tracé embarqué dans un module JS plutôt qu'un fichier `.svg` chargé** : la carte est un `<svg>`
+  dans la page, dont les couleurs sont des variables de `:root` (deux thèmes) — une image `.svg`
+  externe ne les verrait pas ; et les couches suivantes (fuseaux, nuit, capitales) se dessinent dans
+  le même `<svg>` avec la même projection. Le module est dans `js/`, que l'image sert déjà.
+- **Projection** : équirectangulaire, `projeter(lon, lat)` de `js/projection.js` (module pur, testé :
+  coins, méridien 0, antiméridien), sur une surface de 360 × 180 qui est le `viewBox` du `<svg>`.
+  Terres et mer contrastent d'au moins 3:1 dans les deux thèmes (`tests/style.test.js`).
+
 ## Lancer les tests
 
 ```sh
@@ -62,7 +81,7 @@ node --test
 Adresse publique : <https://site-production-f87f.up.railway.app> — service `site` du projet
 Railway `heure-des-capitales`. Le code vit sur <https://github.com/oliviermmm/heure-des-capitales>.
 
-Le site est servi par Railway : un conteneur Caddy qui ne sert que `index.html`, `css/`, `js/` et
+Le site est servi par Railway : un conteneur Caddy qui ne sert que `index.html`, `favicon.svg`, `css/`, `js/` et
 `version.txt` (`Dockerfile`, `railway.json`). Rien n'est ajouté au site lui-même.
 
 - **Chaque push et chaque PR** lance `node --test` (`.github/workflows/tests.yml`). Il ne livre rien.

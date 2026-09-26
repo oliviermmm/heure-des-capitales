@@ -21,6 +21,11 @@
   --nuit-texte: #eef2ff;
   --nuit-doux: #b8c2e0;
   --nuit-bord: #6366f1;
+
+  /* Carte du monde : la mer, les terres, les frontières. */
+  --carte-mer: #dbe7f0;
+  --carte-terre: #5f7043;
+  --carte-frontiere: #f4f1ea;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -40,6 +45,10 @@
     --nuit-texte: #dbe4ff;
     --nuit-doux: #9aa8cc;
     --nuit-bord: #818cf8;
+
+    --carte-mer: #101c30;
+    --carte-terre: #5d6e4a;
+    --carte-frontiere: #0f1420;
   }
 }
 
@@ -109,6 +118,27 @@ h1 {
 :focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* Carte du monde, en tête de page : toute la largeur, la hauteur suit (rapport 2:1 du viewBox). */
+#carte {
+  border: 1px solid var(--bordure);
+  border-radius: 0.75rem;
+  display: block;
+  height: auto;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+#carte .mer {
+  fill: var(--carte-mer);
+}
+
+#carte .terre {
+  fill: var(--carte-terre);
+  stroke: var(--carte-frontiere);
+  stroke-linejoin: round;
+  stroke-width: 0.2;
 }
 
 .groupe h2 {

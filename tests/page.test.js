@@ -17,3 +17,11 @@ test('la mention a son style, et reste masquée le même jour', () => {
   assert.match(CSS, /\.carte \.jour-relatif\s*\{[^}]*font-weight/);
   assert.match(CSS, /\.jour-relatif\[hidden\]\s*\{\s*display:\s*none/);
 });
+
+test('la carte du monde est en tête de page, au-dessus de la grille, et tracée par la page', () => {
+  const HTML = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  assert.ok(HTML.indexOf('id="carte"') < HTML.indexOf('id="contenu"'));
+  assert.match(HTML, /<svg id="carte" viewBox="0 0 360 180"/);
+  assert.match(PAGE, /getElementById\('terre'\)\.setAttribute\('d', tracer\(CONTOURS\)\)/);
+  assert.match(CSS, /#carte\s*\{[^}]*width:\s*100%/);
+});
