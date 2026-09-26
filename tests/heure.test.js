@@ -7,6 +7,7 @@ import {
   formaterDecalage,
   ecartDeJour,
   estLeJour,
+  mentionDeJour,
   heureDeCapitale,
 } from '../js/heure.js';
 
@@ -85,4 +86,10 @@ test('heureDeCapitale rassemble tout', () => {
 
 test('un fuseau inconnu lève une erreur', () => {
   assert.throws(() => heureLocale('Mars/Olympus', instant('2026-01-15T12:00:00Z')), RangeError);
+});
+
+test('mention veille / lendemain sur la carte, rien le même jour', () => {
+  assert.equal(mentionDeJour(-1), 'la veille');
+  assert.equal(mentionDeJour(1), 'le lendemain');
+  assert.equal(mentionDeJour(0), '');
 });

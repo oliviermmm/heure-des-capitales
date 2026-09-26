@@ -172,6 +172,21 @@ h1 {
   top: 0.75rem;
 }
 
+/* Veille ou lendemain du jour de l'utilisateur (mentionDeJour, js/heure.js) : le mot porte l'information,
+   la pastille reprend la couleur du texte de la carte, dont le contraste est déjà vérifié. */
+.carte .jour-relatif {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0 0.5rem;
+}
+
+.carte .jour-relatif[hidden] {
+  display: none;
+}
+
 /* Jour ou nuit dans la capitale : la classe vient de estLeJour (js/heure.js), posée par js/page.js.
    Le libellé « jour » / « nuit » dit la même chose que la couleur, pour qui ne la voit pas. */
 .carte.jour {

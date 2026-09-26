@@ -103,6 +103,13 @@ export function ecartDeJour(fuseau, instant, fuseauUtilisateur) {
   return Math.round((jourCivil(fuseau, instant) - jourCivil(fuseauUtilisateur, instant)) / JOUR_MS);
 }
 
+// Ce que la carte dit de cet écart : rien le même jour.
+export function mentionDeJour(ecart) {
+  if (ecart < 0) return 'la veille';
+  if (ecart > 0) return 'le lendemain';
+  return '';
+}
+
 export function estLeJour(fuseau, instant) {
   const { heure } = composantes(fuseau, instant);
   return heure >= DEBUT_DU_JOUR && heure < FIN_DU_JOUR;
