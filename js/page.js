@@ -2,7 +2,7 @@
 // Toute la logique vit dans les autres modules de js/, purs et testés par « node --test ».
 //
 // Chaque carte est créée une seule fois : filtrer ou trier ne fait que les replacer dans leurs groupes,
-// et la mise à jour de chaque seconde ne réécrit que les textes de l'heure, de la date et du décalage.
+// et la mise à jour de chaque seconde ne réécrit que l'heure, la date, le décalage et le repère jour/nuit.
 import { NOM_DU_SITE } from './site.js';
 import { CAPITALES } from './capitales.js';
 import { heureDeCapitale } from './heure.js';
@@ -28,8 +28,9 @@ const cartes = new Map(CAPITALES.map((entree) => {
   const heure = element('p', 'heure');
   const date = element('p', 'date');
   const decalage = element('p', 'decalage');
-  carte.append(element('h3', 'capitale', entree.capitale), element('p', 'pays', entree.pays), heure, date, decalage);
-  return [entree, { carte, heure, date, decalage }];
+  const moment = element('p', 'moment');
+  carte.append(element('h3', 'capitale', entree.capitale), element('p', 'pays', entree.pays), heure, date, decalage, moment);
+  return [entree, { carte, heure, date, decalage, moment }];
 }));
 
 function afficher() {
@@ -60,6 +61,10 @@ function rafraichir() {
     noeuds.heure.textContent = h.heure;
     noeuds.date.textContent = h.date;
     noeuds.decalage.textContent = h.decalage;
+    // Jour ou nuit : la couleur de la carte vient de la classe (css/style.css), le libellé le dit en toutes lettres.
+    noeuds.carte.classList.toggle('jour', h.estLeJour);
+    noeuds.carte.classList.toggle('nuit', !h.estLeJour);
+    noeuds.moment.textContent = h.estLeJour ? 'jour' : 'nuit';
   }
 }
 
