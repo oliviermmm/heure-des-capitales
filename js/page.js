@@ -7,6 +7,8 @@ import { NOM_DU_SITE } from './site.js';
 import { CAPITALES } from './capitales.js';
 import { heureDeCapitale, mentionDeJour } from './heure.js';
 import { organiser, ORDRE_PAR_DEFAUT } from './grille.js';
+import { CONTOURS } from './monde.js';
+import { tracer } from './projection.js';
 
 const fuseauUtilisateur = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -87,5 +89,7 @@ recherche.addEventListener('input', () => { afficher(); rafraichir(); });
 ordre.addEventListener('change', () => { afficher(); rafraichir(); });
 document.getElementById('reglages').hidden = false;
 document.getElementById('reglages').addEventListener('submit', (evenement) => evenement.preventDefault());
+// Le fond de carte, tracé une fois : la surface par défaut de tracer() est le viewBox du <svg>.
+document.getElementById('terre').setAttribute('d', tracer(CONTOURS));
 afficher();
 battre();

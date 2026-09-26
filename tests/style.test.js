@@ -40,6 +40,12 @@ function contraste(hexA, hexB) {
   return (claire + 0.05) / (sombre + 0.05);
 }
 
+// Éléments graphiques (WCAG 1.4.11) : 3:1 suffit pour distinguer les terres de la mer.
+const NON_TEXTE = 3;
+const COUPLES_GRAPHIQUES = [
+  ['carte-terre', 'carte-mer'],
+];
+
 test('le calcul de contraste donne les valeurs de référence', () => {
   assert.equal(contraste('#000000', '#ffffff'), 21);
   assert.equal(contraste('#777777', '#777777'), 1);
@@ -62,6 +68,15 @@ for (const [i, nom] of ['clair', 'sombre'].entries()) {
       assert.match(b ?? '', /^#[0-9a-f]{6}$/i, `--${fond} absente ou pas en #rrggbb dans le thème ${nom}`);
       const ratio = contraste(a, b);
       assert.ok(ratio >= AA, `--${texte} sur --${fond} : ${ratio.toFixed(2)}:1 < ${AA}:1 (thème ${nom})`);
+    }
+  });
+}
+
+for (const [i, nom] of ['clair', 'sombre'].entries()) {
+  test(`thème ${nom} : la carte distingue les terres de la mer (${NON_TEXTE}:1)`, () => {
+    for (const [a, b] of COUPLES_GRAPHIQUES) {
+      const ratio = contraste(themes[i][a], themes[i][b]);
+      assert.ok(ratio >= NON_TEXTE, `--${a} sur --${b} : ${ratio.toFixed(2)}:1 < ${NON_TEXTE}:1 (thème ${nom})`);
     }
   });
 }

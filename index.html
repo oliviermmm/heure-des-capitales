@@ -25,6 +25,11 @@
       </label>
     </form>
   </header>
+  <!-- Fond de carte : js/page.js y trace les contours des pays (js/monde.js, projection de js/projection.js). -->
+  <svg id="carte" viewBox="0 0 360 180" role="img" aria-label="Carte du monde">
+    <rect class="mer" width="360" height="180"/>
+    <path class="terre" id="terre"/>
+  </svg>
   <main id="contenu">
     <!-- Remplacé par js/page.js : s'il reste affiché, les modules ne se sont pas chargés (page ouverte en file:// ?). -->
     <p id="etat">Les modules JavaScript ne se sont pas chargés : ouvrez la page par le serveur local (voir le README).</p>
