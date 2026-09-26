@@ -1,7 +1,48 @@
-/* Feuille de style du site. Le rendu soigné viendra avec l'affichage de la grille. */
+/* Feuille de style du site : rendu sobre. Le style soigné, le jour/nuit et le responsive viendront après. */
 body {
   font-family: system-ui, sans-serif;
   margin: 0 auto;
   max-width: 72rem;
   padding: 1rem;
+}
+
+#reglages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+#reglages label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.grille {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+}
+
+.carte {
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.carte p,
+.carte h3 {
+  margin: 0.15rem 0;
+}
+
+.carte .heure {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.carte .pays,
+.carte .date,
+.carte .decalage {
+  color: #555;
 }
