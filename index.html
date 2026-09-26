@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>L'heure des capitales</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/page.js"></script>
+</head>
+<body>
+  <header>
+    <h1 id="titre">L'heure des capitales</h1>
+    <p id="utilisateur"></p>
+    <form id="reglages" hidden>
+      <label>Rechercher un pays ou une capitale
+        <input type="search" id="recherche" autocomplete="off" placeholder="ex. Japon, Nairobi">
+      </label>
+      <label>Ordre
+        <select id="ordre">
+          <option value="continent">par continent</option>
+          <option value="decalage">par décalage horaire</option>
+        </select>
+      </label>
+    </form>
+  </header>
+  <main id="contenu">
+    <!-- Remplacé par js/page.js : s'il reste affiché, les modules ne se sont pas chargés (page ouverte en file:// ?). -->
+    <p id="etat">Les modules JavaScript ne se sont pas chargés : ouvrez la page par le serveur local (voir le README).</p>
+  </main>
+</body>
+</html>
