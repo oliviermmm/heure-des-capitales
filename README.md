@@ -21,6 +21,20 @@ sont écrites une fois et testées telles que la page les utilise. Un script cla
 double-clic aurait imposé un double format ou une copie des fonctions pour les tester. Python est le
 seul prérequis, et ce n'est pas une dépendance du site : n'importe quel serveur statique convient.
 
+## Ce que montre la page
+
+- en tête, l'heure, la date et le fuseau du visiteur ;
+- une carte par capitale (capitale, pays, heure, date, décalage UTC), mise à jour chaque seconde ;
+- un champ de recherche sur le pays ou la capitale, y compris les autres capitales d'un pays
+  (« la haye » trouve les Pays-Bas), sans tenir compte de la casse, des accents, des espaces, des
+  tirets ni des apostrophes ;
+- un choix d'ordre : par continent (par défaut, groupes titrés, pays par ordre alphabétique) ou par
+  décalage horaire (du plus en retard sur UTC au plus en avance). Le tri par décalage est calculé au
+  moment où l'on filtre ou trie : un changement d'heure pendant la visite ne réordonne la grille
+  qu'au filtre ou au tri suivant.
+
+Le filtre et le tri sont la fonction pure `organiser` de `js/grille.js`, testée par `node --test`.
+
 ## Lancer les tests
 
 ```sh
