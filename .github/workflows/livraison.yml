@@ -1,0 +1,76 @@
+name: Livraison
+
+# Un tag vX.Y.Z annoté, posé sur main, met ce commit en service sur Railway. Rien d'autre ne livre.
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+# Deux tags poussés coup sur coup ne se doublent pas : le second attend la fin du premier.
+concurrency:
+  group: livraison
+  cancel-in-progress: false
+
+jobs:
+  livrer:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Le tag est-il vX.Y.Z, annoté, et sur main
+        env:
+          # La branche de production est la branche par défaut du dépôt GitHub : elle se lit.
+          PROD: ${{ github.event.repository.default_branch }}
+        run: |
+          # Une version refusée ne se repose pas (un tag ne se déplace pas) : on livre la suivante.
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+            || { echo "::error::« $TAG » n'a pas la forme vX.Y.Z : rien ne part."; exit 1; }
+          # checkout repose le tag en léger depuis github.sha : seule la refspec complète rend l'objet.
+          git fetch --force origin "+refs/tags/$TAG:refs/tags/$TAG"
+          [ "$(git cat-file -t "refs/tags/$TAG")" = tag ] \
+            || { echo "::error::$TAG est un tag léger : rien ne part. Livrer la version suivante, annotée (git tag -a)."; exit 1; }
+          git fetch --no-tags origin "$PROD"
+          git merge-base --is-ancestor "refs/tags/$TAG^{commit}" FETCH_HEAD \
+            || { echo "::error::$TAG ne vise pas un commit de $PROD : rien ne part. Livrer la version suivante, posée sur $PROD."; exit 1; }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node --test
+
+      # Le numéro servi est écrit depuis le tag qui a déclenché : il ne peut pas diverger du numéro livré.
+      - name: Écrire la version servie
+        run: printf '%s\n' "$TAG" > version.txt
+
+      # La CLI Railway ne sert qu'au job : elle n'entre ni dans le dépôt ni dans le site.
+      - name: Mettre en service sur Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE }}
+        run: |
+          [ -n "$RAILWAY_TOKEN" ] || { echo "::error::secret RAILWAY_TOKEN absent (jeton de projet Railway)."; exit 1; }
+          [ -n "$RAILWAY_SERVICE" ] || { echo "::error::variable RAILWAY_SERVICE absente (nom du service Railway)."; exit 1; }
+          npm install --global @railway/cli
+          # --ci attend la fin du build et échoue avec lui.
+          railway up --ci --service "$RAILWAY_SERVICE"
+
+      # Le CORPS, pas le code HTTP : c'est le tag qu'on doit lire, pas « quelque chose répond ».
+      - name: Constater la version en service
+        env:
+          URL_PUBLIQUE: ${{ vars.URL_PUBLIQUE }}
+        run: |
+          [ -n "$URL_PUBLIQUE" ] || { echo "::error::variable URL_PUBLIQUE absente : livraison non constatée."; exit 1; }
+          for essai in $(seq 1 30); do
+            servie="$(curl --fail --silent --show-error "$URL_PUBLIQUE/version.txt" || true)"
+            [ "$servie" = "$TAG" ] && { echo "$URL_PUBLIQUE sert $TAG."; exit 0; }
+            echo "essai $essai : servie « $servie », attendue « $TAG »"
+            sleep 10
+          done
+          echo "::error::$URL_PUBLIQUE ne sert pas $TAG après 5 minutes."
+          exit 1

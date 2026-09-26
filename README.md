@@ -57,6 +57,34 @@ node --test
 
 (ou `npm test`, qui lance la même commande). Node 24 ou plus récent.
 
+## En ligne
+
+Adresse publique : **à inscrire ici** quand le domaine Railway du service existera (ticket #1684,
+geste manuel), et dans la variable `URL_PUBLIQUE` du dépôt GitHub.
+
+Le site est servi par Railway : un conteneur Caddy qui ne sert que `index.html`, `css/`, `js/` et
+`version.txt` (`Dockerfile`, `railway.json`). Rien n'est ajouté au site lui-même.
+
+- **Chaque push et chaque PR** lance `node --test` (`.github/workflows/tests.yml`). Il ne livre rien.
+- **Une version part d'un tag**, et de lui seul (`.github/workflows/livraison.yml`) : un tag annoté
+  `vX.Y.Z` posé sur un commit de `main`. La première sera `v0.1.0`.
+
+  ```sh
+  git tag -a v0.1.0 -m "Ce que cette version apporte"
+  git push origin v0.1.0        # on nomme le tag ; jamais --tags
+  ```
+
+  Le workflow refuse un tag léger, hors de `main` ou d'une autre forme, relance `node --test`, écrit
+  le tag dans `version.txt`, met en service par `railway up`, puis attend que l'adresse publique le
+  serve. Une version refusée ou fautive ne se repose pas : on livre la suivante (un tag ne se
+  déplace jamais).
+- **Constater la version en service** : `curl <adresse publique>/version.txt` rend le tag servi.
+  En local, ce fichier dit `hors-livraison`.
+
+Ce que le dépôt GitHub doit porter pour livrer : le secret `RAILWAY_TOKEN` (jeton de projet
+Railway), les variables `RAILWAY_SERVICE` (nom du service) et `URL_PUBLIQUE` (sans `/` final), et
+`main` comme branche par défaut — c'est elle que le workflow lit comme branche de production.
+
 ## Organisation
 
 - `index.html` : la page ;
