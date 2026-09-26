@@ -35,6 +35,20 @@ seul prérequis, et ce n'est pas une dépendance du site : n'importe quel serveu
 
 Le filtre et le tri sont la fonction pure `organiser` de `js/grille.js`, testée par `node --test`.
 
+## Choix de style
+
+- **Thème selon le système** (`prefers-color-scheme`) : clair ou sombre comme l'appareil du visiteur,
+  sans bouton de bascule. Toutes les couleurs sont des variables de `:root` dans `css/style.css`.
+- **Typographie système** (`system-ui`) : aucune police à télécharger, rien sur un CDN.
+- **Jour ou nuit dans la capitale** : fond de soleil pâle le jour, bleu de nuit la nuit, d'après
+  `estLeJour` de `js/heure.js` (7 h – 19 h, heure locale). Un libellé « ☀ jour » / « ☾ nuit » dit la
+  même chose en toutes lettres, pour ne pas s'en remettre à la seule couleur.
+- **Responsive** : une colonne sur mobile, autant de colonnes de 15rem que la largeur en porte dès 36rem.
+- **Contrastes WCAG AA** (4,5:1) sur tout le texte, dans les deux thèmes : `tests/style.test.js` les
+  recalcule depuis la feuille de style. Changer une couleur, c'est la changer dans les deux thèmes.
+- **Mouvement** : seule animation, un fondu de couleur quand une carte passe du jour à la nuit, coupé
+  sous `prefers-reduced-motion`.
+
 ## Lancer les tests
 
 ```sh
@@ -46,7 +60,7 @@ node --test
 ## Organisation
 
 - `index.html` : la page ;
-- `css/style.css` : la feuille de style ;
+- `css/style.css` : la feuille de style (voir « Choix de style ») ;
 - `js/` : les modules. `js/page.js` est le seul à toucher au DOM ; tous les autres sont purs, pour
   s'importer aussi bien dans la page que dans node (un test le vérifie) ;
 - `tests/` : les tests, un fichier `*.test.js` par module.
