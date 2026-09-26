@@ -1,0 +1,7 @@
+/* Feuille de style du site. Le rendu soigné viendra avec l'affichage de la grille. */
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0 auto;
+  max-width: 72rem;
+  padding: 1rem;
+}
