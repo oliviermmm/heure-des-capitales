@@ -29,3 +29,11 @@ test('l’image sert la version, et pas les tests', () => {
   assert.ok(copie.includes('version.txt'));
   assert.ok(!copie.includes('tests'));
 });
+
+// Sans icône déclarée, le navigateur demande /favicon.ico, qui rend 404 (écart E1 de la recette #1682).
+test('la page déclare une icône, servie par l’image', () => {
+  const icone = lire('index.html').match(/<link rel="icon" href="([^"]+)"/);
+  assert.ok(icone, 'index.html ne déclare aucune icône');
+  assert.match(lire(icone[1]), /<svg[\s>]/);
+  assert.ok(copies().includes(icone[1]), `${icone[1]} absent du Dockerfile`);
+});

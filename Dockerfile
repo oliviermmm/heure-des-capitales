@@ -3,7 +3,7 @@ FROM caddy:2-alpine
 
 # Seulement ce que la page charge, plus la version servie (écrite par la livraison depuis le tag).
 # tests/livraison.test.js vérifie que tout ce que index.html charge est copié ici.
-COPY index.html version.txt /srv/
+COPY index.html favicon.svg version.txt /srv/
 COPY css/ /srv/css/
 COPY js/ /srv/js/
 
