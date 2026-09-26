@@ -2,10 +2,10 @@
 // Toute la logique vit dans les autres modules de js/, purs et testés par « node --test ».
 //
 // Chaque carte est créée une seule fois : filtrer ou trier ne fait que les replacer dans leurs groupes,
-// et la mise à jour de chaque seconde ne réécrit que l'heure, la date, le décalage et le repère jour/nuit.
+// et la mise à jour de chaque seconde ne réécrit que l'heure, la date, la veille/le lendemain, le décalage et le repère jour/nuit.
 import { NOM_DU_SITE } from './site.js';
 import { CAPITALES } from './capitales.js';
-import { heureDeCapitale } from './heure.js';
+import { heureDeCapitale, mentionDeJour } from './heure.js';
 import { organiser, ORDRE_PAR_DEFAUT } from './grille.js';
 
 const fuseauUtilisateur = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -27,10 +27,11 @@ const cartes = new Map(CAPITALES.map((entree) => {
   const carte = element('article', 'carte');
   const heure = element('p', 'heure');
   const date = element('p', 'date');
+  const jourRelatif = element('p', 'jour-relatif');
   const decalage = element('p', 'decalage');
   const moment = element('p', 'moment');
-  carte.append(element('h3', 'capitale', entree.capitale), element('p', 'pays', entree.pays), heure, date, decalage, moment);
-  return [entree, { carte, heure, date, decalage, moment }];
+  carte.append(element('h3', 'capitale', entree.capitale), element('p', 'pays', entree.pays), heure, date, jourRelatif, decalage, moment);
+  return [entree, { carte, heure, date, jourRelatif, decalage, moment }];
 }));
 
 function afficher() {
@@ -60,6 +61,10 @@ function rafraichir() {
     if (!h) parFuseau.set(entree.fuseau, (h = heureDeCapitale(entree.fuseau, instant, fuseauUtilisateur)));
     noeuds.heure.textContent = h.heure;
     noeuds.date.textContent = h.date;
+    // Veille ou lendemain du jour de l'utilisateur ; masquée le même jour.
+    const mention = mentionDeJour(h.ecartDeJour);
+    noeuds.jourRelatif.textContent = mention;
+    noeuds.jourRelatif.hidden = !mention;
     noeuds.decalage.textContent = h.decalage;
     // Jour ou nuit : la couleur de la carte vient de la classe (css/style.css), le libellé le dit en toutes lettres.
     noeuds.carte.classList.toggle('jour', h.estLeJour);
